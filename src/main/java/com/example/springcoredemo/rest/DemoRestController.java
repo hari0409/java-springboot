@@ -23,7 +23,7 @@ public class DemoRestController {
 
 
     // Default home page controller 
-    @GetMapping("/")
+    @GetMapping("/getCoach")
     public String getDailyCoach() {
         sampleMethodCall(new TennisCoach());
         return this.myCoach.getDailyWorkout();
