@@ -10,18 +10,15 @@ import com.example.springcoredemo.common.Coach;
 @RestController
 public class DemoRestController {
     private Coach myCoach;
-    private Coach myAnotherCoach;
 
     @Autowired
-    public DemoRestController(@Qualifier("cricketCoach") Coach theCoach, @Qualifier("cricketCoach") Coach anotherCoach) {
-        System.out.println("In: " + getClass().getSimpleName());
+    public DemoRestController(@Qualifier("SwimmingCoach") Coach theCoach) {
         this.myCoach = theCoach;
-        this.myAnotherCoach = anotherCoach;
     }
 
     // Default home page controller
     @GetMapping("/getCoach")
     public String getDailyCoach() {
-        return "Are they form the same Bean: " + (myAnotherCoach == myCoach);
+        return myCoach.getDailyWorkout();
     }
 }
