@@ -1,11 +1,11 @@
 package com.example.springcoredemo.common;
 
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class CricketCoach implements Coach {
     public CricketCoach() {
         System.out.println("In: " + getClass().getSimpleName());
@@ -14,6 +14,16 @@ public class CricketCoach implements Coach {
     @Override
     public String getDailyWorkout() {
         return "Practice Fast Bowling for 20 mins";
+    }
+
+    @PostConstruct
+    public void init(){
+        System.out.println("Called after the beans are initialised");
+    }
+
+    @PreDestroy
+    public void destroy(){
+        System.out.println("Called before the beans are destroyed");
     }
 
 }
