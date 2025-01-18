@@ -28,8 +28,7 @@ public class DemoCrudApplication {
 	}
 
 	private void findStudent(StudentDao studentDao, int i) {
-		System.out.println(studentDao.findById(i));
-		System.out.println(Student.class);
+		System.out.println(studentDao.findAllStudentStrict());
 	}
 
 	private void createStudent(StudentDao studentDao) {
