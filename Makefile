@@ -6,17 +6,19 @@ run_spring:
 
 # Target to start the PostgreSQL Docker container
 run_db:
-	docker run -d --name springboot-postgres \
-		-e POSTGRES_USER=admin \
-		-e POSTGRES_PASSWORD=admin \
-		-e POSTGRES_DB=springboot \
-		-p 5432:5432 \
-		-v /Users/haribaskars/Development/Java/springcoredemo/data:/var/lib/postgresql/data \
-		postgres
+	docker run -d \
+  		--name springboot-mysql \
+		-e MYSQL_ROOT_PASSWORD=root \
+		-e MYSQL_USER=admin \
+		-e MYSQL_PASSWORD=admin \
+		-p 3306:3306 \
+		-v /Users/haribaskars/Development/Java/springcoredemo/data:/var/lib/mysql \
+		mysql:latest
+
 
 # Target to stop the Docker container
 stop_db:
-	docker stop springboot-postgres && docker rm springboot-postgres
+	docker stop springboot-mysql && docker rm springboot-mysql
 
 # Target to clean up database data
 clean_db:
