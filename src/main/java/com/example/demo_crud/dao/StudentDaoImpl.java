@@ -39,9 +39,42 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     public List<Student> findAllStudentStrict() {
-        TypedQuery<Student> findAllStrict = em.createQuery("SELECT s FROM Student s WHERE s.email LIKE :emailFilter", Student.class);
-        findAllStrict.setParameter("emailFilter","%hari%");
+        TypedQuery<Student> findAllStrict = em.createQuery("SELECT s FROM Student s WHERE s.email LIKE :emailFilter",
+                Student.class);
+        findAllStrict.setParameter("emailFilter", "%hari%");
         return findAllStrict.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateStudent(Student student) {
+        em.merge(student);
+    }
+
+    @Override
+    @Transactional
+    public void bulkUpdateEmail(String findEmailString, String replaceEmailString) {
+        findEmailString = "%" + findEmailString + "%";
+        em
+                .createQuery("UPDATE Student SET email=:replaceEmailString WHERE email LIKE :findEmailString")
+                .setParameter("replaceEmailString", replaceEmailString)
+                .setParameter("findEmailString", findEmailString)
+                .executeUpdate();
+    }
+
+    // Normal delete
+    @Override
+    public void deleteStudent(Student s) {
+        em.remove(s);
+    }
+    // Delete with createQuery
+    @Override
+    @Transactional
+    public void bulkDelete(int id) {
+        em.createQuery("DELETE FROM Student WHERE id > :id")
+                .setParameter("id", id)
+                .executeUpdate();
+        
     }
 
 }

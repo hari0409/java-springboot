@@ -2,6 +2,7 @@ package com.example.demo_crud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,16 +24,15 @@ public class DemoCrudApplication {
 	public CommandLineRunner commandLineRunner(StudentDao studentDao) {
 		return runner -> {
 			createStudent(studentDao);
-			findStudent(studentDao, 200);
 		};
 	}
 
-	private void findStudent(StudentDao studentDao, int i) {
-		System.out.println(studentDao.findAllStudentStrict());
-	}
-
 	private void createStudent(StudentDao studentDao) {
-		Student s = new Student("Chad", "IDK", "chad@gmail.com");
+		Student s = new Student(
+				UUID.randomUUID().toString().substring(0, 10).toUpperCase(),
+				UUID.randomUUID().toString().substring(0, 5).toUpperCase(),
+				UUID.randomUUID().toString().substring(0, 15) + "@gmail.com");
+		System.out.println(UUID.randomUUID().toString());
 		studentDao.save(s);
 		System.out.println(s.getId());
 	}

@@ -12,4 +12,12 @@ public interface StudentDao {
     List<Student> findAllStudents();
 
     List<Student> findAllStudentStrict();
+
+    void updateStudent(Student student);
+
+    void bulkUpdateEmail(String findEmailString, String replaceEmailString);
+
+    void deleteStudent(Student s);
+
+    void bulkDelete(int id);
 }
