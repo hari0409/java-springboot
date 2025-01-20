@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +47,25 @@ public class SampleRoute {
                 objMap.getTypeFactory().constructCollectionType(List.class, Student.class));
         System.out.println(students);
         return ResponseEntity.ok().body("All Good");
+    }
+
+    // Working with Path Variables
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<String> getStudentDetail(@PathVariable String studentId) {
+        return ResponseEntity.status(201).body("Student: " + studentId);
+    }
+
+    // Working with Path Variables
+    @GetMapping("/student/{studentId}/{classGrp}")
+    public ResponseEntity<String> getStudentDetailMap(@PathVariable Map<String, String> pathMap) {
+        return ResponseEntity.status(201)
+                .body("Student: " + pathMap.get("studentId") + " Group Nam: " + pathMap.get("classGrp"));
+    }
+
+    // RegEx with Path variables
+    @GetMapping("/studentreg/{id:[0-9]+}")
+    public ResponseEntity<String> getStudentRegex(@PathVariable String id) {
+        return ResponseEntity.status(201)
+                .body("Student: " + id);
     }
 }
