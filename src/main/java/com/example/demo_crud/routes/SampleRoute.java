@@ -33,8 +33,8 @@ public class SampleRoute {
     }
 
     @ExceptionHandler(exception = GlobalCustomException.class)
-    public ResponseEntity<ErrorResponseObject> handleException(Exception e) {
-        return ResponseEntity.status(404)
+    public ResponseEntity<ErrorResponseObject> handleException(GlobalCustomException e) {
+        return ResponseEntity.status(e.statusCode)
                 .body(new ErrorResponseObject(ProjectConstants.FAILURE, e.getMessage()));
     }
 
@@ -60,7 +60,7 @@ public class SampleRoute {
     @GetMapping("/getstudents/{studentId}")
     public ResponseEntity<ResponseObject<Student>> getStudentCustom(@PathVariable Integer studentId) {
         if (studentId >= this.theStudents.size() || studentId < 0) {
-            throw new GlobalCustomException("Student with " + studentId + "doesnt exists");
+            throw new GlobalCustomException("Student with " + studentId + "doesnt exists", 404);
         }
         return ResponseEntity.status(200)
                 .body(new ResponseObject<Student>(ProjectConstants.SUCCESS, this.theStudents.get(studentId + 1)));
