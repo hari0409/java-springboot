@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo_crud.constants.ProjectConstants;
 import com.example.demo_crud.exceptions.GlobalCustomException;
 import com.example.demo_crud.pojo.Student;
-import com.example.demo_crud.response.ErrorResponseObject;
 import com.example.demo_crud.response.ResponseObject;
 
 import jakarta.annotation.PostConstruct;
@@ -32,17 +30,7 @@ public class SampleRoute {
         this.theStudents = studs;
     }
 
-    @ExceptionHandler(exception = GlobalCustomException.class)
-    public ResponseEntity<ErrorResponseObject> handleException(GlobalCustomException e) {
-        return ResponseEntity.status(e.statusCode)
-                .body(new ErrorResponseObject(ProjectConstants.FAILURE, e.getMessage()));
-    }
 
-    @ExceptionHandler(exception = GlobalCustomException.class)
-    public ResponseEntity<ErrorResponseObject> handleExceptionGeneric(Exception e) {
-        return ResponseEntity.status(404)
-                .body(new ErrorResponseObject(ProjectConstants.FAILURE, e.getMessage()));
-    }
 
     // Way 1
     @GetMapping("/students/{studentId}")
@@ -60,7 +48,7 @@ public class SampleRoute {
     @GetMapping("/getstudents/{studentId}")
     public ResponseEntity<ResponseObject<Student>> getStudentCustom(@PathVariable Integer studentId) {
         if (studentId >= this.theStudents.size() || studentId < 0) {
-            throw new GlobalCustomException("Student with " + studentId + "doesnt exists", 404);
+            throw new GlobalCustomException("Student with " + studentId + " doesnt exists", 404);
         }
         return ResponseEntity.status(200)
                 .body(new ResponseObject<Student>(ProjectConstants.SUCCESS, this.theStudents.get(studentId + 1)));
