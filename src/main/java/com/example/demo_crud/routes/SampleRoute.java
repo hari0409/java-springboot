@@ -1,65 +1,68 @@
 package com.example.demo_crud.routes;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo_crud.constants.ProjectConstants;
-import com.example.demo_crud.entity.Teacher;
 import com.example.demo_crud.exceptions.GlobalCustomException;
+import com.example.demo_crud.pojo.Student;
+import com.example.demo_crud.response.ErrorResponseObject;
 import com.example.demo_crud.response.ResponseObject;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
+import jakarta.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api")
 public class SampleRoute {
-    private EntityManager em;
+    private List<Student> theStudents;
 
-    SampleRoute(EntityManager em) {
-        this.em = em;
+    @PostConstruct
+    public void loadData() {
+        List<Student> studs = new ArrayList<Student>();
+        studs.add(new Student("Charles", "Bob"));
+        studs.add(new Student("Mario", "Johnson"));
+        studs.add(new Student("Self", "Smith"));
+        this.theStudents = studs;
     }
 
-    // Normal Params
-    @GetMapping("/student")
-    @Transactional
-    public ResponseEntity<ResponseObject<List<Teacher>>> getParamsStudent() {
+    @ExceptionHandler(exception = GlobalCustomException.class)
+    public ResponseEntity<ErrorResponseObject> handleException(Exception e) {
+        return ResponseEntity.status(404)
+                .body(new ErrorResponseObject(ProjectConstants.FAILURE, e.getMessage()));
+    }
+
+    @ExceptionHandler(exception = GlobalCustomException.class)
+    public ResponseEntity<ErrorResponseObject> handleExceptionGeneric(Exception e) {
+        return ResponseEntity.status(404)
+                .body(new ErrorResponseObject(ProjectConstants.FAILURE, e.getMessage()));
+    }
+
+    // Way 1
+    @GetMapping("/students/{studentId}")
+    public ResponseEntity<ResponseObject<Student>> getStudent(@PathVariable Integer studentId) {
         try {
-            Teacher t = new Teacher("Hari Baskar", "S", 10, "Biology");
-            em.persist(t);
-            TypedQuery<Teacher> teacherTypedQuery = em.createQuery("SELECT t FROM Teacher t", Teacher.class);
-            List<Teacher> teachers = teacherTypedQuery.getResultList();
-            ResponseObject<List<Teacher>> ro = new ResponseObject<>(ProjectConstants.SUCCESS, teachers);
-            return ResponseEntity.status(201).body(ro);
+            return ResponseEntity.status(200)
+                    .body(new ResponseObject<Student>(ProjectConstants.SUCCESS, theStudents.get(studentId)));
         } catch (Exception e) {
-            ResponseObject<List<Teacher>> ro = new ResponseObject<>(ProjectConstants.FAILURE, null, e.getMessage());
-            return ResponseEntity.status(201).body(ro);
+            return ResponseEntity.status(404)
+                    .body(new ResponseObject<Student>(ProjectConstants.FAILURE, null, "Student Record Id Not Found"));
         }
     }
 
-    // Names Params
-    @GetMapping("/teacher")
-    public ResponseEntity<String> getParamsTeacher(@RequestParam(name = "name") String teacherName,
-            @RequestParam(name = "age") Integer teacherAge) {
-        return ResponseEntity.status(201).body("Name: " + teacherName + " Age: " + teacherAge);
-    }
-
-    // Required & Default Value
-    @GetMapping("/janitor")
-    public ResponseEntity<String> getParamExtra(@RequestParam(required = false, defaultValue = "NONE") String name) {
-        return ResponseEntity.status(201).body("Janitor: " + name);
-    }
-
-    // Map of params
-    @GetMapping("/principle")
-    public ResponseEntity<String> getParamMap(@RequestParam Map<String, String> paramMap) {
-        return ResponseEntity.status(201).body(paramMap.get("name") + " " + paramMap.get("age"));
+    // Way 2
+    @GetMapping("/getstudents/{studentId}")
+    public ResponseEntity<ResponseObject<Student>> getStudentCustom(@PathVariable Integer studentId) {
+        if (studentId >= this.theStudents.size() || studentId < 0) {
+            throw new GlobalCustomException("Student with " + studentId + "doesnt exists");
+        }
+        return ResponseEntity.status(200)
+                .body(new ResponseObject<Student>(ProjectConstants.SUCCESS, this.theStudents.get(studentId + 1)));
     }
 }
