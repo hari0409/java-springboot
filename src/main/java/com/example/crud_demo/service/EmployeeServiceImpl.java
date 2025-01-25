@@ -6,40 +6,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.crud_demo.dao.EmployeeDao;
 import com.example.crud_demo.entity.Employee;
+import com.example.crud_demo.jpaRepository.EmployeeRepository;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    public EmployeeDao employeeDao;
+    public EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeDao employeeDao) {
-        this.employeeDao = employeeDao;
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
     public List<Employee> findAll() {
-        return employeeDao.findAll();
+        return employeeRepository.findAll();
     }
 
     @Override
     public Employee findById(Integer id) {
-        return employeeDao.findById(id);
+        return employeeRepository.getReferenceById(id);
     }
 
     @Override
     @Transactional
     public Employee save(Employee employee) {
-        Employee savedEmployee = employeeDao.save(employee);
+        Employee savedEmployee = employeeRepository.save(employee);
         return savedEmployee;
     }
 
     @Override
     @Transactional
     public void delete(Integer id) {
-        employeeDao.delete(id);
+        employeeRepository.deleteById(id);
     }
 
 }
